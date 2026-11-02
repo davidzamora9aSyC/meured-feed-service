@@ -1,0 +1,24 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Feed source of truth inicial (auditoría). El fast-path vive en Redis.
+model MeuredTimelineEvent {
+  id              String   @id @default(uuid())
+  type            String
+  actorAuthUserId String
+  objectType      String
+  objectId        String
+  payloadJson     Json?
+  createdAt       DateTime @default(now())
+
+  @@index([actorAuthUserId])
+  @@index([createdAt])
+  @@index([type])
+}
+
